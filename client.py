@@ -1,25 +1,24 @@
-import socket
-import sys
 
-try: 
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-except socket.error:
-    print("Error while creating socket")    
-    sys.exit()
+import socket 
 
-print("Socket created sucesfully")
-
-host = "localhost"
+host = 'localhost'  
 port = 8888
+BUFFER_SIZE = 2000 
+MESSAGE = ''
+tcpClientA = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 
-try:
-    remote_ip = socket.gethostbyname(host)
-except socket.error:
-    print("Could not find an ip address")
-    sys.exit()
+tcpClientA.connect((host, port))
 
-print("Ip adress" + remote_ip)
 
-s.connect((remote_ip, port))
 
-print("Socket connected to host: " + host + " by ip: " + remote_ip)
+
+ 
+while MESSAGE != 'exit':
+    
+    
+    data = tcpClientA.recv(BUFFER_SIZE).decode()
+    print("Server: ", data)
+    MESSAGE = input("Enter message to continue/ Enter exit:")
+    tcpClientA.send(str.encode(MESSAGE))
+
+tcpClientA.close() 

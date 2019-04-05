@@ -1,5 +1,5 @@
 import socket
-import sys
+import sys 
 import datetime
 import random
 from _thread import *
@@ -31,30 +31,38 @@ def Fibonacci(n):
     else: return Fibonacci(n-1)+Fibonacci(n-2)
 #KOHA
 def KOHA():
-    print(datetime.datetime.now().strftime("Date: %Y-%m-%d \nTime: %H:%M"))
+    return datetime.datetime.now().strftime("Date: %Y-%m-%d Time: %H:%M")
 #LOJA
 def LOJA():
+    numArray = []
     for x in range(7):
-        print(random.randint(1,49))
+        numArray.append(random.randint(1,49))
+    return numArray    
 #PRINTIMI
 def PRINTIMI(input):
     return input
 #KONVERTIMI
-def KONVERTIMI(num, value):
+def KONVERTIMI(num):
+    val = "Jepni masen qe doni te konvertoni: "
+    conn.send(val.encode())
+    try: 
+        value = int(conn.recv(1024).decode())
+    except:
+        return "You must enter a number"
     if num == 1:
-        print(value*1.34102)
+        return str(value*1.34102)
     elif num == 2: 
-        print(value*0.7457)
+        return str(value*0.7457)
     elif num == 3:
-        print(value*0.0174533)
+        return str(value*0.0174533)
     elif num == 4:
-        print(value*57.2958)
+        return str(value*57.2958)
     elif num == 5:
-        print(value*3.78541)
+        return str(value*3.78541)
     elif num == 6:
-        print(value*0.264172)
+        return str(value*0.264172)
     else:
-        print("Invalid Value")
+        return str("Invalid Value")
 
 
 
@@ -70,42 +78,71 @@ except socket.error:
 s.listen(10)
 
 def clientthread(conn, addr):
-    welcome =   "Welcome to the server.\n"
+    welcome =   """Mirseerdhet!
+                Zgjedhni njerin nga Operacionet 
+                (IPADRESA, NUMRIIPORTIT, BASHKETINGELLORE, 
+                PRINTIMI, EMRIIKOMPJUTERIT, KOHA, LOJA,
+                FIBONACCI, KONVERTIMI)? """
     conn.send(welcome.encode())
 
     while True:
-        data = conn.recv(1024) 
+        welcome2 = """Zgjedhni njerin nga Operacionet 
+                (IPADRESA, NUMRIIPORTIT, BASHKETINGELLORE, 
+                PRINTIMI, EMRIIKOMPJUTERIT, KOHA, LOJA,
+                FIBONACCI, KONVERTIMI)? """        
+        data = conn.recv(1024).decode() 
         if not data:
             break
         print("Server received data:", data)
-        data = data.upper()
-        data = data.decode()
-        print(data)
-        method = data.split(" ")[0]
-        if method == "FIBONACCI":
-            if data.split(" ")[1] == '':
-                MESSAGE = "You must enter a number after Fibonacci"
-            else:
-                MESSAGE = str(Fibonacci(int(data.split(" ")[1])))
-        elif method == "IPADRESA":
-            MESSAGE = str(addr[0])
-        elif method == "NUMRIIPORTIT":
-            MESSAGE = str(addr[1])
-        elif method == "EMRIKOMPJUTERIT":
-             MESSAGE = str(s.getsockname()[0])
-        elif method == "BASHKETINGELLORE":
-            if(data.split(" ")[1] == ''):
-                MESSAGE = 'You must enter a text afer Bashketingellore.'
-            else: 
-                print(data.split("BASHKETINGELLORE"))
-                MESSAGE = str(BASHKETINGELLORE(data.split("BASHKETINGELLORE")[1]))
+        method = data.upper()
         
+        if method == "IPADRESA":
+            MESSAGE = "IP Adresa e klientit është: " + str(addr[0])
+        elif method == "NUMRIIPORTIT":
+            MESSAGE = "Klienti është duke përdorur portin: " + str(addr[1])    
+        elif method == "BASHKETINGELLORE":
+            teksti = "Shkruani tekstin: "
+            conn.send(teksti.encode())
+            txt = conn.recv(1024).decode() 
+            MESSAGE = "Teksti i pranuar përmban " + str(BASHKETINGELLORE(txt)) + " bashketingellore" 
+        elif method == "PRINTIMI":
+            teksti = "Shkruani tekstin: "
+            conn.send(teksti.encode())
+            txt = conn.recv(1024).decode() 
+            MESSAGE = txt.strip() 
+        elif method == "EMRIIKOMPJUTERIT":
+             MESSAGE = "Emri I klientit është: " +  str(s.getsockname()[0])   
+        elif method == "KOHA":
+             MESSAGE = KOHA()  
+        elif method == "LOJA":
+             MESSAGE = str(LOJA())[1:-1]      
+        elif method == "FIBONACCI":
+            numri = "Shkruani numrin: "
+            conn.send(numri.encode())
+            num = int(conn.recv(1024).decode())
+            MESSAGE = str(Fibonacci(num))
+        elif method == "KONVERTIMI":
+            opcionet = """Zgjedhni njerin nga numrat korespondues me poshte: 
+                    1:  KilowattToHorsepower
+                    2:  HorsepowerToKilowatt
+                    3:  DegreesToRadians
+                    4:  RadiansToDegrees
+                    5:  GallonsToLiters
+                    6:  LitersToGallons
+            """
+            conn.send(opcionet.encode())
+            try: 
+                num = int(conn.recv(1024).decode())
+            except:
+                print("You must type a number")
+            MESSAGE = KONVERTIMI(num)
         else: 
            MESSAGE = "We dont know what to do with your request"
         print(MESSAGE)
         if MESSAGE == 'exit':
             break
-        conn.send(str.encode(MESSAGE))  # echo 
+        conn.send(str.encode(MESSAGE) + ("\n").encode() + welcome2.encode())  # echo 
+        
     conn.close()        
 
 
