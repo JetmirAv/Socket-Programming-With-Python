@@ -1,21 +1,26 @@
 import socket 
 import sys
+import functools 
+import operator  
 
 def connect(host, port):
 
     MESSAGE = ''
+    data = ''
     fiekUDP = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server_address = (host, port)
     fiekUDP.connect(server_address)
     print("Socket-i u krijua me sukses ne hostin " + host + " me port " + str(port))
     
-    while MESSAGE != 'exit':
+    while MESSAGE != 'exit' and data != 'exit':
+        fiekUDP.sendto(MESSAGE.encode(), server_address)
         try:
-            fiekUDP.sendto(MESSAGE.encode(), server_address)
-            data, address = fiekUDP.recvfrom(1024)
-            if data == 'Lidhja u nderpre':
+            
+            data = fiekUDP.recvfrom(1024)
+            data = str(data[0].decode())
+            if data == 'Lidhja u nderpre' or data == 'exit':
                 break
-            MESSAGE = input("Serveri: " + data.decode() + "\n")
+            MESSAGE = input("Serveri: " + data + "\n")
             if not MESSAGE:
                 MESSAGE = 'null'
         except KeyboardInterrupt:

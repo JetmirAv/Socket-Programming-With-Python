@@ -12,7 +12,7 @@ def NUMRIIPORTIT(addr):
     return "Klienti është duke përdorur portin: " + str(addr[1]) 
 #EMRIKOMPJUTERIT
 def EMRIKOMPJUTERIT(s):
-    return "Emri I klientit është: " + s.getsockname()[0]
+    return "Emri I hostit është: " + socket.gethostname()
 # BASHKETINGELLORE
 def BASHKETINGELLORE(conn):
     teksti = "Shkruani tekstin: "

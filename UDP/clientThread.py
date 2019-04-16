@@ -10,9 +10,9 @@ def clientthread(conn, addr, s):
     while True:
                
         method, addr = s.recvfrom(1024)
+        method = method.decode().upper()
+        print("Server received data:", method)
         
-        print("Server received data:", method.decode())
-        method = method.upper()
         
         if method == "IPADRESA":
             MESSAGE =  IPADRESA(addr)
@@ -23,13 +23,13 @@ def clientthread(conn, addr, s):
         elif method == "BASHKETINGELLORE":
             teksti = "Shkruani tekstin: "
             s.sendto(teksti.encode(), addr)
-            txt = s.recvfrom(1024).decode() 
+            txt = s.recvfrom(1024)
             MESSAGE = "Teksti i pranuar përmban " + str(BASHKETINGELLORE(txt)) + " bashketingellore" 
 
         elif method == "PRINTIMI":
             teksti = "Shkruani tekstin: "
             s.sendto(teksti.encode(),addr)
-            txt = s.recvfrom(1024).decode() 
+            txt = s.recvfrom(1024)
             MESSAGE = txt.strip() 
 
         elif method == "EMRIIKOMPJUTERIT":
@@ -68,14 +68,14 @@ def clientthread(conn, addr, s):
         else: 
             MESSAGE = "Ju nuk keni zgjedhur asnje nga opcionet e mesiperme.\nA deshironi te nderpreni lidhjen?(JO)"
             s.sendto(str.encode(MESSAGE),addr)
-            response = s.recvfrom(1024).decode().upper()
+            response = s.recvfrom(1024)
+            response = response[0].upper().decode()
             if response == 'JO':
                MESSAGE = "Vazhdoni"
             else: 
                 MESSAGE = "Lidhja me " + str(addr[0]) + ":" + str(addr[1]) + " u nderpre"
                 MESSAGE = ""
-                s.sendto(str.encode(MESSAGE),addr)
-                print(MESSAGE)
+                s.sendto(str.encode(MESSAGE), addr)
                 break    
 
         print(MESSAGE)

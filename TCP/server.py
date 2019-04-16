@@ -11,7 +11,11 @@ try:
     s.bind((host, port))
     s.listen(10)
     while True:
-        conn, addr = s.accept()
+        try:
+            conn, addr = s.accept()
+        except KeyboardInterrupt:
+            print('\nJu e ndalet serverin') 
+            break       
         print("Connected with " + str(addr[0]) + ":" + str(addr[1]))
         start_new_thread(clientthread, (conn, addr, s))   
     s.close()

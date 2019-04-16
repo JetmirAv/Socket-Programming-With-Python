@@ -12,8 +12,7 @@ def NUMRIIPORTIT(addr):
     return "Klienti është duke përdorur portin: " + str(addr[1]) 
 #EMRIKOMPJUTERIT
 def EMRIKOMPJUTERIT(s):
-    print(s)
-    return "Emri I klientit është: " + s.getsockname()[0]
+    return "Emri I hostit është: " + socket.gethostname()
 # BASHKETINGELLORE
 def BASHKETINGELLORE(conn):
     lista = ['a' , 'e' , 'i' , 'o' , 'u' , 'A' , 'E' , 'I' , 'O' , 'U' , ' ' , '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
