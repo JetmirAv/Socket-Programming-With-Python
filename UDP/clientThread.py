@@ -5,21 +5,20 @@ def clientthread(conn, addr, s):
     welcome = """Zgjedhni njerin nga Operacionet 
                 (IPADRESA, NUMRIIPORTIT, BASHKETINGELLORE, 
                 PRINTIMI, EMRIIKOMPJUTERIT, KOHA, LOJA,
-                FIBONACCI, KONVERTIMI)? """ 
-    print("KETU")            
+                FIBONACCI, KONVERTIMI)? """             
     s.sendto(welcome.encode(), addr)
     while True:
                
-        data, addr = s.recvfrom(1024)
+        method, addr = s.recvfrom(1024)
         
-        print("Server received data:", data)
-        method = data.upper()
+        print("Server received data:", method.decode())
+        method = method.upper()
         
         if method == "IPADRESA":
-            MESSAGE = "IP Adresa e klientit është: " + str(addr[0])
+            MESSAGE =  IPADRESA(addr)
 
         elif method == "NUMRIIPORTIT":
-            MESSAGE = "Klienti është duke përdorur portin: " + str(addr[1])  
+            MESSAGE = NUMRIIPORTIT(addr)  
 
         elif method == "BASHKETINGELLORE":
             teksti = "Shkruani tekstin: "
@@ -34,13 +33,13 @@ def clientthread(conn, addr, s):
             MESSAGE = txt.strip() 
 
         elif method == "EMRIIKOMPJUTERIT":
-             MESSAGE = "Emri I klientit është: " +  EMRIKOMPJUTERIT(s)   
+             MESSAGE = EMRIKOMPJUTERIT(s)   
 
         elif method == "KOHA":
              MESSAGE = KOHA()  
 
         elif method == "LOJA":
-             MESSAGE = str(LOJA())[1:-1]      
+             MESSAGE = LOJA()    
 
         elif method == "FIBONACCI":
             numri = "Shkruani numrin: "
@@ -60,7 +59,7 @@ def clientthread(conn, addr, s):
             s.sendto(opcionet.encode(),addr)
             try: 
                 num = int(s.recvfrom(1024).decode())
-                MESSAGE = KONVERTIMI(num, s)
+                MESSAGE = KONVERTIMI(s)
             except:
                 print("Duhet te shtypni nje numer.")
             

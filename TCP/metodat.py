@@ -12,18 +12,20 @@ def NUMRIIPORTIT(addr):
     return "Klienti është duke përdorur portin: " + str(addr[1]) 
 #EMRIKOMPJUTERIT
 def EMRIKOMPJUTERIT(s):
-    print(s.getsockname())
+    print(s)
     return "Emri I klientit është: " + s.getsockname()[0]
 # BASHKETINGELLORE
 def BASHKETINGELLORE(conn):
+    lista = ['a' , 'e' , 'i' , 'o' , 'u' , 'A' , 'E' , 'I' , 'O' , 'U' , ' ' , '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     teksti = "Shkruani tekstin: "
     conn.send(teksti.encode())
     txt = conn.recv(1024).decode() 
-    vowels=0
+    numero=0
     for i in txt:
-      if(i=='a' or i=='e' or i=='i' or i=='o' or i=='u' or i=='A' or i=='E' or i=='I' or i=='O' or i=='U'):
-            vowels=vowels+1
-    return "Teksti i pranuar përmban " + str(vowels) + " bashketingellore" 
+      #if(i=='a' or i=='e' or i=='i' or i=='o' or i=='u' or i=='A' or i=='E' or i=='I' or i=='O' or i=='U' or i==' ' or i == '1'):
+       if(i in lista):
+            numero+=1
+    return "Teksti i pranuar përmban " + str(len(txt) - numero) + " bashketingellore" 
     
 #Fibonacci
 def Fibonacci(n):
@@ -59,14 +61,14 @@ def KONVERTIMI(conn):
     try: 
         num = int(conn.recv(1024).decode())
     except:
-        return "Duhet te shtypni nje numer."
+        return "Duhet te shtypni nje numer.(INT)"
            
     val = "Jepni sasine: "
     conn.send(val.encode())
     try: 
-        value = int(conn.recv(1024).decode())
+        value = Double(conn.recv(1024).decode())
     except:
-        return "You must enter a number"
+        return "Duhet te shtypni nje numer.(Double)"
     if num == 1:
         return str(value*1.34102)
     elif num == 2: 
@@ -80,5 +82,74 @@ def KONVERTIMI(conn):
     elif num == 6:
         return str(value*0.264172)
     else:
-        return str("Invalid Value")
+        return str("Vlere e panjohur")
 
+#Gjenero Password
+def PASSWORDGEN():
+    Uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    Lowercase = "abcdefghijklmnopqrstuvwxyz"
+    Digits = "0123456789"
+    Symbols = "()!?*+=_-"
+
+    Mixedbag = Uppercase + Lowercase + Digits + Symbols
+    while True:
+        word_length = random.randint(10, 20)
+
+        Madeword = ""
+        for x in range(word_length):
+            ch = random.choice(Mixedbag)
+            Madeword = Madeword + ch
+        break
+    return ("Password: " + Madeword)    
+
+#KONTROLLOPORTIN
+def KONTROLLOPORTIN(conn):
+    teksti = "Shkruani hostin te cilin doni ta testoni: "
+    conn.send(teksti.encode())
+    host = conn.recv(1024).decode() 
+    isIp = validate_ip(host)
+    if not isIp:
+        try:
+            host_ip = socket.gethostbyname(host)
+            host = host_ip
+        except socket.gaierror:
+            return "Nuk ishte e mundur te gjindet hosti"
+    teksti = "Shkruani portin te cilin doni ta testoni: "
+    conn.send(teksti.encode())
+    try:
+        port = int(conn.recv(1024).decode())
+        if (port < 0 or port > 65535): 
+            return ("Porti duhet te jete nje numer ne intervalin 0-65535") 
+        
+    except:
+        return ("Porti duhet te jete nje numer.") 
+    
+    if check_port(host, port):
+        return ("Porti " + str(port) + " ne hostin " + str(host) + " eshte i hapur")     
+    else: 
+        return ("Porti " + str(port) + " ne hostin " + str(host) + " eshte i mbyllur")     
+
+#CHECK PORT
+def check_port(host, port):
+    SUCCESS = 0
+    timeout = 0.5
+    sock = socket.socket()
+    sock.settimeout(timeout)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    connected = sock.connect_ex((host, port)) is SUCCESS
+    sock.close()
+    print(connected)
+    return connected
+
+
+def validate_ip(s):
+    a = s.split('.')
+    if len(a) != 4:
+        return False
+    for x in a:
+        if not x.isdigit():
+            return False
+        i = int(x)
+        if i < 0 or i > 255:
+            return False
+    return True

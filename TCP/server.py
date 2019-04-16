@@ -13,17 +13,18 @@ try:
     while True:
         conn, addr = s.accept()
         print("Connected with " + str(addr[0]) + ":" + str(addr[1]))
-        try: 
-            start_new_thread(clientthread, (conn, addr, s))
-        except ConnectionAbortedError: 
-            print("Klienti nderpreu lidhjen me server")     
+        start_new_thread(clientthread, (conn, addr, s))   
     s.close()
+except KeyboardInterrupt:
+    MESSAGE = 'exit'
+    conn.send(str.encode(MESSAGE))
+    print("\nJu e ndalet serverin")
 except ConnectionAbortedError: 
-            print("Klienti nderpreu lidhjen me server")       
+    print("Klienti nderpreu lidhjen me server")       
 except socket.error:
     print("Porti eshte duke u perdorur")
  
-
+ 
 
 
 

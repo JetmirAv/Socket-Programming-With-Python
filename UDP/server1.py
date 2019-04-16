@@ -15,5 +15,12 @@ try:
         print("Connected with " + str(addr[0]) + ":" + str(addr[1]))
         
     s.close() 
+except KeyboardInterrupt:
+    MESSAGE = 'exit'
+    s.sendto(str.encode(MESSAGE), addr)
+    print("\nJu e ndalet serverin")
+except ConnectionAbortedError: 
+    print("Klienti nderpreu lidhjen me server")       
 except socket.error:
     print("Porti eshte duke u perdorur")
+ 
