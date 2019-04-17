@@ -14,14 +14,10 @@ def NUMRIIPORTIT(addr):
 def EMRIKOMPJUTERIT(s):
     return "Emri I hostit është: " + socket.gethostname()
 # BASHKETINGELLORE
-def BASHKETINGELLORE(conn, self):
+def BASHKETINGELLORE(txt):
     lista = ['a' , 'e' , 'i' , 'o' , 'u' , 'A' , 'E' , 'I' , 'O' , 'U' , ' ' , '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-    teksti = "Shkruani tekstin: "
-    conn.sendto(teksti.encode(), self.client_address)
-    txt = self.request[0].strip().decode()
     numero=0
     for i in txt:
-      #if(i=='a' or i=='e' or i=='i' or i=='o' or i=='u' or i=='A' or i=='E' or i=='I' or i=='O' or i=='U' or i==' ' or i == '1'):
        if(i in lista):
             numero+=1
     return "Teksti i pranuar përmban " + str(len(txt) - numero) + " bashketingellore" 
@@ -43,40 +39,21 @@ def LOJA():
 #PRINTIMI
 def PRINTIMI(data):
     return data.strip() 
+    
 #KONVERTIMI
-def KONVERTIMI(conn):
-    opcionet = """Zgjedhni njerin nga numrat korespondues me poshte: 
-                    1:  KilowattToHorsepower
-                    2:  HorsepowerToKilowatt
-                    3:  DegreesToRadians
-                    4:  RadiansToDegrees
-                    5:  GallonsToLiters
-                    6:  LitersToGallons
-            """
-    conn.send(opcionet.encode())
-    try: 
-        num = int(conn.recv(1024).decode())
-    except:
-        return "Duhet te shtypni nje numer.(INT)"
-           
-    val = "Jepni sasine: "
-    conn.send(val.encode())
-    try: 
-        value = Double(conn.recv(1024).decode())
-    except:
-        return "Duhet te shtypni nje numer.(Double)"
-    if num == 1:
-        return str(value*1.34102)
-    elif num == 2: 
-        return str(value*0.7457)
-    elif num == 3:
-        return str(value*0.0174533)
-    elif num == 4:
-        return str(value*57.2958)
-    elif num == 5:
-        return str(value*3.78541)
-    elif num == 6:
-        return str(value*0.264172)
+def KONVERTIMI(opcioni, sasia):               
+    if opcioni == "KilowattToHorsepower".upper():
+        return str(sasia*1.34102)
+    elif opcioni == "HorsepowerToKilowatt".upper(): 
+        return str(sasia*0.7457)
+    elif opcioni == "DegreesToRadians".upper():
+        return str(sasia*0.0174533)
+    elif opcioni == "RadiansToDegrees".upper():
+        return str(sasia*57.2958)
+    elif opcioni == "GallonsToLiters".upper():
+        return str(sasia*3.78541)
+    elif opcioni == "LitersToGallons".upper():
+        return str(sasia*0.264172)
     else:
         return str("Vlere e panjohur")
 
