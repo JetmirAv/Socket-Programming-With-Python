@@ -4,16 +4,16 @@ import datetime
 import random
 
 
-#IPADRESA
+#metoda IPADRESA
 def IPADRESA(addr):
     return "IP Adresa e klientit është: " + str(addr[0])
-#NUMRIIPORTIT
+#metoda NUMRIIPORTIT
 def NUMRIIPORTIT(addr):
     return "Klienti është duke përdorur portin: " + str(addr[1]) 
-#EMRIKOMPJUTERIT
+#metoda EMRIKOMPJUTERIT
 def EMRIKOMPJUTERIT(s):
     return "Emri I hostit është: " + socket.gethostname()
-# BASHKETINGELLORE
+#metoda BASHKETINGELLORE
 def BASHKETINGELLORE(conn):
     lista = ['a' , 'e' , 'i' , 'o' , 'u' , 'A' , 'E' , 'I' , 'O' , 'U' , ' ' , '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     teksti = "Shkruani tekstin: "
@@ -26,27 +26,27 @@ def BASHKETINGELLORE(conn):
             numero+=1
     return "Teksti i pranuar përmban " + str(len(txt) - numero) + " bashketingellore" 
     
-#Fibonacci
+#metoda Fibonacci
 def Fibonacci(n):
     if n == 0: return 0
     elif n == 1: return 1
     else: return Fibonacci(n-1)+Fibonacci(n-2)
-#KOHA
+#metoda KOHA
 def KOHA():
     return datetime.datetime.now().strftime("DATA: %Y-%m-%d KOHA: %H:%M")
-#LOJA
+#metoda LOJA
 def LOJA():
     numArray = []
     for x in range(7):
         numArray.append(random.randint(1,49))
     return str(numArray)[1:-1]    
-#PRINTIMI
+#metoda PRINTIMI
 def PRINTIMI(conn):
     teksti = "Shkruani tekstin: "
     conn.send(teksti.encode())
     txt = conn.recv(1024).decode() 
     return txt.strip() 
-#KONVERTIMI
+#metoda KONVERTIMI
 def KONVERTIMI(conn):
     opcionet = """Zgjedhni njerin nga numrat korespondues me poshte: 
                     1:  KilowattToHorsepower
@@ -83,7 +83,7 @@ def KONVERTIMI(conn):
     else:
         return str("Vlere e panjohur")
 
-#Gjenero Password
+#metoda Gjenero Password
 def PASSWORDGEN():
     Uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     Lowercase = "abcdefghijklmnopqrstuvwxyz"
@@ -101,7 +101,7 @@ def PASSWORDGEN():
         break
     return ("Password: " + Madeword)    
 
-#KONTROLLOPORTIN
+#metoda KONTROLLOPORTIN
 def KONTROLLOPORTIN(conn):
     teksti = "Shkruani hostin te cilin doni ta testoni: "
     conn.send(teksti.encode())
@@ -128,7 +128,7 @@ def KONTROLLOPORTIN(conn):
     else: 
         return ("Porti " + str(port) + " ne hostin " + str(host) + " eshte i mbyllur")     
 
-#CHECK PORT
+#metoda CHECK PORT
 def check_port(host, port):
     SUCCESS = 0
     timeout = 0.5
@@ -140,7 +140,7 @@ def check_port(host, port):
     print(connected)
     return connected
 
-
+#metoda Per validimin e IP te tipit IPv4
 def validate_ip(s):
     a = s.split('.')
     if len(a) != 4:

@@ -1,7 +1,7 @@
 import threading
 import socketserver
 from metodat import *
-
+### Teksti qe shfaqet ne startim te scriptes
 print("""
 :::::::::::::::::::::::::::::::::::::::'########:'####:'########:'##:::'##::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::: ##.....::. ##:: ##.....:: ##::'##:::::::::::::::::::::::::::::::::::::::::
@@ -27,13 +27,14 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
     def handle(self):
         data = self.request[0].strip().decode().upper()
         data = data.split(" ",1)
-		### get port number
+		###Ruajme portin e klientit ne variablen port
         port = self.client_address[1]
-		### get the communicate socket
+		### Ruajme socketin e nevojshem per komunikim ne variablen socket
         socket = self.request[1]
-		### get client host ip address
+		### Ruajme adresen e klientit ne variablen client_address
         client_address = (self.client_address[0])
         print("received call from client address: %s:%s" %(client_address, port))
+        ### Testojme kerkesen
         if len(data) == 1:
             print("received data: %s" %(data[0]))
         else:    
@@ -103,7 +104,7 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
         else: 
             try:
                 MESSAGE = "Ju nuk keni zgjedhur asnje nga opcionet e mesiperme."
-                          
+            ### Kontrolli per gabime               
             except socket.error:
                 print("Lidhja u ndepre")
                 
@@ -115,23 +116,26 @@ socketserver.ThreadingMixIn,
 socketserver.UDPServer):
     pass
 
+### Fillimi i scriptes
 if __name__ == "__main__":
-    # in this example, we will bind port to 8888
-    # for client socketection
-    HOST, PORT = "localhost", 12000
+    host, port = "localhost", 12000
     try:
-        server = ThreadedUDPServer((HOST, PORT), 
-            ThreadedUDPRequestHandler)
+        ### Krijojm serverin me ane te Klases ThreadUDPServer ne portin 12000 
+        server = ThreadedUDPServer((host, port), 
+            ThreadedUDPRequestHandler)    
         ip, port = server.server_address
+        print("Startoi serveri ne %s:%s."  %(ip, port))
+        print("Ne pritje te kerkesave.")
+        ### fillojm serverin
         server.serve_forever()
-        # Start a thread with the server -- 
-        # that thread will then start one
-        # more thread for each request
+        ### Krijojme nje thread per cdo klient qe lidhet me serverin.
+        ### Me pas ai thread krijon nga nje thread per cdo kerkese qe behet
         server_thread = threading.Thread(target=server.serve_forever)
-        # Exit the server thread when the main thread terminates
+        # Mbyll te gjite thread-at ne lidhje me klientin ne momentin qe klienti shkeputet
         server_thread.daemon = True
         server_thread.start()
         server.shutdown()
+    ### Kontrolli per gabime
     except KeyboardInterrupt:
         print("\nJu e ndalet serverin")    
     except OSError:
