@@ -6,23 +6,21 @@ import random
 
 #IPADRESA
 def IPADRESA(addr):
-    return "IP Adresa e klientit është: " + str(addr[0])
+    return "IP Adresa e klientit është: " + str(addr)
 #NUMRIIPORTIT
 def NUMRIIPORTIT(addr):
-    return "Klienti është duke përdorur portin: " + str(addr[1]) 
+    return "Klienti është duke përdorur portin: " + str(addr) 
 #EMRIKOMPJUTERIT
 def EMRIKOMPJUTERIT(s):
     return "Emri I hostit është: " + socket.gethostname()
 # BASHKETINGELLORE
-def BASHKETINGELLORE(conn):
-    teksti = "Shkruani tekstin: "
-    conn.send(teksti.encode())
-    txt = conn.recv(1024).decode() 
-    vowels=0
+def BASHKETINGELLORE(txt):
+    lista = ['a' , 'e' , 'i' , 'o' , 'u' , 'A' , 'E' , 'I' , 'O' , 'U' , ' ' , '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    numero=0
     for i in txt:
-      if(i=='a' or i=='e' or i=='i' or i=='o' or i=='u' or i=='A' or i=='E' or i=='I' or i=='O' or i=='U'):
-            vowels=vowels+1
-    return "Teksti i pranuar përmban " + str(vowels) + " bashketingellore" 
+       if(i in lista):
+            numero+=1
+    return "Teksti i pranuar përmban " + str(len(txt) - numero) + " bashketingellore" 
     
 #Fibonacci
 def Fibonacci(n):
@@ -39,45 +37,85 @@ def LOJA():
         numArray.append(random.randint(1,49))
     return str(numArray)[1:-1]    
 #PRINTIMI
-def PRINTIMI(conn):
-    teksti = "Shkruani tekstin: "
-    conn.send(teksti.encode())
-    txt = conn.recv(1024).decode() 
-    return txt.strip() 
+def PRINTIMI(data):
+    return data.strip() 
+    
 #KONVERTIMI
-def KONVERTIMI(conn):
-    opcionet = """Zgjedhni njerin nga numrat korespondues me poshte: 
-                    1:  KilowattToHorsepower
-                    2:  HorsepowerToKilowatt
-                    3:  DegreesToRadians
-                    4:  RadiansToDegrees
-                    5:  GallonsToLiters
-                    6:  LitersToGallons
-            """
-    conn.send(opcionet.encode())
-    try: 
-        num = int(conn.recv(1024).decode())
-    except:
-        return "Duhet te shtypni nje numer.(INT)"
-           
-    val = "Jepni sasine: "
-    conn.send(val.encode())
-    try: 
-        value = Double(conn.recv(1024).decode())
-    except:
-        return "Duhet te shtypni nje numer.(Double)"
-    if num == 1:
-        return str(value*1.34102)
-    elif num == 2: 
-        return str(value*0.7457)
-    elif num == 3:
-        return str(value*0.0174533)
-    elif num == 4:
-        return str(value*57.2958)
-    elif num == 5:
-        return str(value*3.78541)
-    elif num == 6:
-        return str(value*0.264172)
+def KONVERTIMI(opcioni, sasia):               
+    if opcioni == "KilowattToHorsepower".upper():
+        return str(sasia*1.34102)
+    elif opcioni == "HorsepowerToKilowatt".upper(): 
+        return str(sasia*0.7457)
+    elif opcioni == "DegreesToRadians".upper():
+        return str(sasia*0.0174533)
+    elif opcioni == "RadiansToDegrees".upper():
+        return str(sasia*57.2958)
+    elif opcioni == "GallonsToLiters".upper():
+        return str(sasia*3.78541)
+    elif opcioni == "LitersToGallons".upper():
+        return str(sasia*0.264172)
     else:
         return str("Vlere e panjohur")
 
+#Gjenero Password
+def PASSWORDGEN():
+    Uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    Lowercase = "abcdefghijklmnopqrstuvwxyz"
+    Digits = "0123456789"
+    Symbols = "()!?*+=_-"
+
+    Mixedbag = Uppercase + Lowercase + Digits + Symbols
+    while True:
+        word_length = random.randint(10, 20)
+
+        Madeword = ""
+        for x in range(word_length):
+            ch = random.choice(Mixedbag)
+            Madeword = Madeword + ch
+        break
+    return ("Password: " + Madeword)    
+
+#KONTROLLOPORTIN
+def KONTROLLOPORTIN(host, port):
+    isIp = validate_ip(host)
+    if not isIp:
+        try:
+            host_ip = socket.gethostbyname(host)
+            host = host_ip
+        except socket.gaierror:
+            return "Nuk ishte e mundur te gjindet hosti"
+    try:
+        port = int(port)
+        if (port < 0 or port > 65535): 
+            return ("Porti duhet te jete nje numer ne intervalin 0-65535") 
+    except:
+        return ("Porti duhet te jete nje numer.") 
+    
+    if check_port(host, port):
+        return ("Porti " + str(port) + " ne hostin " + str(host) + " eshte i hapur")     
+    else: 
+        return ("Porti " + str(port) + " ne hostin " + str(host) + " eshte i mbyllur")     
+
+#CHECK PORT
+def check_port(host, port):
+    SUCCESS = 0
+    timeout = 0.5
+    sock = socket.socket()
+    sock.settimeout(timeout)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    connected = sock.connect_ex((host, port)) is SUCCESS
+    sock.close()
+    return connected
+
+
+def validate_ip(s):
+    a = s.split('.')
+    if len(a) != 4:
+        return False
+    for x in a:
+        if not x.isdigit():
+            return False
+        i = int(x)
+        if i < 0 or i > 255:
+            return False
+    return True
