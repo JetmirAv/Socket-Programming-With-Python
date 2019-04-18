@@ -65,9 +65,9 @@ def KONVERTIMI(conn):
     val = "Jepni sasine: "
     conn.send(val.encode())
     try: 
-        value = Double(conn.recv(1024).decode())
+        value = float(conn.recv(1024).decode())
     except:
-        return "Duhet te shtypni nje numer.(Double)"
+        return "Duhet te shtypni nje numer.(Float)"
     if num == 1:
         return str(value*1.34102)
     elif num == 2: 

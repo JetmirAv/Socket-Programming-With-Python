@@ -5,7 +5,7 @@ from _thread import *
 from clientThread import *
 
 host = 'localhost'
-port = 12000
+port = 8000
 ### Krijojm socketin te protokolit TCP
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -55,8 +55,8 @@ except KeyboardInterrupt:
     print("\nJu e ndalet serverin")
 except ConnectionAbortedError: 
     print("Klienti nderpreu lidhjen me server")       
-except socket.error:
-    print("Porti eshte duke u perdorur")
+# except socket.error:
+#     print("Porti eshte duke u perdorur")
  
  
 

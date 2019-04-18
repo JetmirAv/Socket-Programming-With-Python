@@ -83,9 +83,9 @@ def hosti():
 ### Metoda per te zgjedhur portin   
 def porti():
     try:
-        input2 = input("Shkruani portin me te cilin doni te lidheni.(default 12000): ")        
+        input2 = input("Shkruani portin me te cilin doni te lidheni.(default 8000): ")        
         if not input2 :
-            return 12000
+            return 8000
         else:
             try:
                 val = int(input2)

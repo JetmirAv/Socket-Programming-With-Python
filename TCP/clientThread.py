@@ -12,7 +12,7 @@ def clientthread(conn, addr, s):
         data = conn.recv(1024).decode() 
         
         print("Server received data:", data)
-        method = data.upper()
+        method = data.upper().strip()
         
         if method == "IPADRESA":
             MESSAGE = IPADRESA(addr)
