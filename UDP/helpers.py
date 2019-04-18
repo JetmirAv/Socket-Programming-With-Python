@@ -14,14 +14,21 @@ def connect(host, port):
         ### Tetojme kyqjen ne hostin dhe portin e kerkuar. 
         fiekUDP.connect((host, port))
         print("Socket-i u krijua me sukses ne hostin " + host + " me port " + str(port))
-        ### Presim kerkesen nga tastiera
-        data = input("Type: ")
-        ### Dergojme kerkesen ne server
+        data = ""
+        ### Dergojme kerkesen per kycje ne server
         fiekUDP.sendall(data.encode() + "\n".encode())
-        ### Presim pergjigje nga serveri### Presim pergjigje nga serveri    
+        ### Presim pergjigje nga serveri
         received = fiekUDP.recv(1024)
         ### Printojm pergjigje nga serveri
-        print("Serveri: %s"%received.decode())
+        print("Serveri: %s"%received.decode())  
+        ### Presim kerkesen nga tastiera dhe e dergojme
+        data = input("Shkruani emrin e kerkeses: ")
+        fiekUDP.sendall(data.encode())
+        ### Presim pergjigje nga serveri per keresen
+        received = fiekUDP.recv(1024)
+        ### Printojm pergjigje nga serveri
+        print("Serveri: %s"%received.decode())     
+        print("Lidhja me serverin perfundoi")
     ### Kontrolli per gabime    
     except KeyboardInterrupt:
         print("\nScripta u ndal")    
@@ -99,3 +106,6 @@ def validate_ip(s):
         if i < 0 or i > 255:
             return False
     return True
+### Metoda qe gjen fjalen ne nje fjali
+def contains_word(s, w):
+    return f' {w} ' in f' {s} '

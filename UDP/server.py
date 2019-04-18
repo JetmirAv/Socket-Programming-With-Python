@@ -33,7 +33,17 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
         socket = self.request[1]
 		### Ruajme adresen e klientit ne variablen client_address
         client_address = (self.client_address[0])
-        print("received call from client address: %s:%s" %(client_address, port))
+        print("Received call from client address: %s:%s" %(client_address, port))
+        welcome = """Zgjedhni njerin nga Operacionet 
+                (IPADRESA, NUMRIIPORTIT, BASHKETINGELLORE, 
+                PRINTIMI, EMRIIKOMPJUTERIT, KOHA, LOJA,
+                FIBONACCI, KONVERTIMI)? """ 
+        socket.sendto(welcome.encode(), self.client_address)
+        # data = self.request[0].strip().decode().upper()
+        data = socket.recvfrom(1024)[0].decode()      
+        data = data.split(" ",1)
+        data[0] = data[0].upper()
+        print(data[0])
         ### Testojme kerkesen
         if len(data) == 1:
             print("received data: %s" %(data[0]))
@@ -110,10 +120,8 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
                 
         
        
-        socket.sendto(MESSAGE.upper().encode(), self.client_address)       
-class ThreadedUDPServer(
-socketserver.ThreadingMixIn, 
-socketserver.UDPServer):
+        socket.sendto(MESSAGE.encode(), self.client_address)       
+class ThreadedUDPServer(socketserver.ThreadingMixIn, socketserver.UDPServer):
     pass
 
 ### Fillimi i scriptes
@@ -121,19 +129,19 @@ if __name__ == "__main__":
     host, port = "localhost", 12000
     try:
         ### Krijojm serverin me ane te Klases ThreadUDPServer ne portin 12000 
-        server = ThreadedUDPServer((host, port), 
-            ThreadedUDPRequestHandler)    
+        server = ThreadedUDPServer((host, port), ThreadedUDPRequestHandler)    
         ip, port = server.server_address
         print("Startoi serveri ne %s:%s."  %(ip, port))
         print("Ne pritje te kerkesave.")
-        ### fillojm serverin
+        ### Presim klientet
         server.serve_forever()
         ### Krijojme nje thread per cdo klient qe lidhet me serverin.
         ### Me pas ai thread krijon nga nje thread per cdo kerkese qe behet
         server_thread = threading.Thread(target=server.serve_forever)
-        # Mbyll te gjite thread-at ne lidhje me klientin ne momentin qe klienti shkeputet
+        ### Fillon threadin
         server_thread.daemon = True
         server_thread.start()
+        ### Mbyll te gjite thread-at ne lidhje me klientin ne momentin qe klienti shkeputet
         server.shutdown()
     ### Kontrolli per gabime
     except KeyboardInterrupt:
