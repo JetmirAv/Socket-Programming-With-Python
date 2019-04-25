@@ -2,7 +2,7 @@ import socket
 import sys 
 from _thread import *
 
-from clientThread import *
+from clientThread import * 
 
 host = 'localhost'
 port = 8000

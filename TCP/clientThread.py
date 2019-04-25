@@ -4,7 +4,7 @@ def clientthread(conn, addr, s):
     welcome = """Zgjedhni njerin nga Operacionet 
                 (IPADRESA, NUMRIIPORTIT, BASHKETINGELLORE, 
                 PRINTIMI, EMRIIKOMPJUTERIT, KOHA, LOJA,
-                FIBONACCI, KONVERTIMI)? """ 
+                FIBONACCI, KONVERTIMI, KONTROLLOPORTIN, PASSWORDGEN)? """ 
     conn.send(welcome.encode())
 
     while True:

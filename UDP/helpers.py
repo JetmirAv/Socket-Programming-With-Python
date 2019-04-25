@@ -20,14 +20,7 @@ def connect(host, port):
         ### Presim pergjigje nga serveri
         received = fiekUDP.recv(1024)
         ### Printojm pergjigje nga serveri
-        print("Serveri: %s"%received.decode())  
-        ### Presim kerkesen nga tastiera dhe e dergojme
-        data = input("Shkruani emrin e kerkeses: ")
-        fiekUDP.sendall(data.encode())
-        ### Presim pergjigje nga serveri per keresen
-        received = fiekUDP.recv(1024)
-        ### Printojm pergjigje nga serveri
-        print("Serveri: %s"%received.decode())     
+        print("Serveri: %s"%received.decode())   
         print("Lidhja me serverin perfundoi")
     ### Kontrolli per gabime    
     except KeyboardInterrupt:

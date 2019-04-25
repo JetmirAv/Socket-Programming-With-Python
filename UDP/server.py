@@ -1,23 +1,24 @@
 import threading
 import socketserver
 from metodat import *
-### Teksti qe shfaqet ne startim te scriptes
+
+# Teksti qe shfaqet ne startim te scriptes
 print("""
-:::::::::::::::::::::::::::::::::::::::'########:'####:'########:'##:::'##::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::'####:'##:'####:'##:::'##::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::: ##.....::. ##:: ##.....:: ##::'##:::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::: ##:::::::: ##:: ##::::::: ##:'##::::::::::::::::::::::::::::::::::::::::::
-::::::::::::::::::::::::::::::::::::::: ######:::: ##:: ######::: #####:::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::: ##:::: ##:: ##::: ###:::::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::: ##...::::: ##:: ##...:::: ##. ##::::::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::: ##:::::::: ##:: ##::::::: ##:. ##:::::::::::::::::::::::::::::::::::::::::
-::::::::::::::::::::::::::::::::::::::: ##:::::::'####: ########: ##::. ##::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::: ##:::::::'##: ####: ##::. ##::::::::::::::::::::::::::::::::::::::::
 :::::::::::::::::::::::::::::::::::::::..::::::::....::........::..::::..:::::::::::::::::::::::::::::::::::::::::
-:::'##::::'##:'########::'########::::::::::::'######::'########:'########::'##::::'##:'########:'########::'####:
+:::'##::::'##:'####::'####::::::::::::'##::'####:'####::'##::::'##:'####:'####::'##:
 ::: ##:::: ##: ##.... ##: ##.... ##::::::::::'##... ##: ##.....:: ##.... ##: ##:::: ##: ##.....:: ##.... ##:. ##::
 ::: ##:::: ##: ##:::: ##: ##:::: ##:::::::::: ##:::..:: ##::::::: ##:::: ##: ##:::: ##: ##::::::: ##:::: ##:: ##::
-::: ##:::: ##: ##:::: ##: ########::'#######:. ######:: ######::: ########:: ##:::: ##: ######::: ########::: ##::
+::: ##:::: ##: ##:::: ##: ####::'###:. ##:: ##::: ####:: ##:::: ##: ##::: ####::: ##::
 ::: ##:::: ##: ##:::: ##: ##.....:::........::..... ##: ##...:::: ##.. ##:::. ##:: ##:: ##...:::: ##.. ##:::: ##::
 ::: ##:::: ##: ##:::: ##: ##:::::::::::::::::'##::: ##: ##::::::: ##::. ##:::. ## ##::: ##::::::: ##::. ##::: ##::
-:::. #######:: ########:: ##:::::::::::::::::. ######:: ########: ##:::. ##:::. ###:::: ########: ##:::. ##:'####:
+:::. ###:: ####:: ##:::::::::::::::::. ##:: ####: ##:::. ##:::. #:::: ####: ##:::. ##:'##:
 ::::.......:::........:::..:::::::::::::::::::......:::........::..:::::..:::::...:::::........::..:::::..::....::
 """)
 
@@ -27,24 +28,24 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
     def handle(self):
         data = self.request[0].strip().decode().upper()
         data = data.split(" ",1)
-		###Ruajme portin e klientit ne variablen port
+		# Ruajme portin e klientit ne variablen port
         port = self.client_address[1]
-		### Ruajme socketin e nevojshem per komunikim ne variablen socket
+		# Ruajme socketin e nevojshem per komunikim ne variablen socket
         socket = self.request[1]
-		### Ruajme adresen e klientit ne variablen client_address
+		# Ruajme adresen e klientit ne variablen client_address
         client_address = (self.client_address[0])
         print("Received call from client address: %s:%s" %(client_address, port))
         welcome = """Zgjedhni njerin nga Operacionet 
                 (IPADRESA, NUMRIIPORTIT, BASHKETINGELLORE, 
                 PRINTIMI, EMRIIKOMPJUTERIT, KOHA, LOJA,
-                FIBONACCI, KONVERTIMI)? """ 
+                FIBONACCI, KONVERTIMI, KONTROLLOPORTIN, PASSWORDGEN)? """ 
         socket.sendto(welcome.encode(), self.client_address)
         # data = self.request[0].strip().decode().upper()
         data = socket.recvfrom(1024)[0].decode()      
         data = data.split(" ",1)
         data[0] = data[0].upper()
         print(data[0])
-        ### Testojme kerkesen
+        # Testojme kerkesen
         if len(data) == 1:
             print("received data: %s" %(data[0]))
         else:    
@@ -114,7 +115,7 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
         else: 
             try:
                 MESSAGE = "Ju nuk keni zgjedhur asnje nga opcionet e mesiperme."
-            ### Kontrolli per gabime               
+            # Kontrolli per gabime               
             except socket.error:
                 print("Lidhja u ndepre")
                 
@@ -124,26 +125,26 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
 class ThreadedUDPServer(socketserver.ThreadingMixIn, socketserver.UDPServer):
     pass
 
-### Fillimi i scriptes
+# Fillimi i scriptes
 if __name__ == "__main__":
     host, port = "localhost", 12000
     try:
-        ### Krijojm serverin me ane te Klases ThreadUDPServer ne portin 12000 
+        # Krijojm serverin me ane te Klases ThreadUDPServer ne portin 12000 
         server = ThreadedUDPServer((host, port), ThreadedUDPRequestHandler)    
         ip, port = server.server_address
         print("Startoi serveri ne %s:%s."  %(ip, port))
         print("Ne pritje te kerkesave.")
-        ### Presim klientet
+        # Presim klientet
         server.serve_forever()
-        ### Krijojme nje thread per cdo klient qe lidhet me serverin.
-        ### Me pas ai thread krijon nga nje thread per cdo kerkese qe behet
+        # Krijojme nje thread per cdo klient qe lidhet me serverin.
+        # Me pas ai thread krijon nga nje thread per cdo kerkese qe behet
         server_thread = threading.Thread(target=server.serve_forever)
-        ### Fillon threadin
+        # Fillon threadin
         server_thread.daemon = True
         server_thread.start()
-        ### Mbyll te gjite thread-at ne lidhje me klientin ne momentin qe klienti shkeputet
+        # Mbyll te gjite thread-at ne lidhje me klientin ne momentin qe klienti shkeputet
         server.shutdown()
-    ### Kontrolli per gabime
+    # Kontrolli per gabime
     except KeyboardInterrupt:
         print("\nJu e ndalet serverin")    
     except OSError:
