@@ -1,61 +1,48 @@
-import socket 
+import socket
 import sys
 
+defaultHost = 'localhost'
+defaultPort = 12000
+
+
+### Metoda me te cilen starton Klienti
 def connect(host, port):
-    BUFFER_SIZE = 1024 
-    MESSAGE = ''
-    data = ''
-    ### Krijojm socketin ne protokollin TCP
-    fiekUDP = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
+    HOST, PORT = host, port
+    data = " ".join(sys.argv[1:])
+    received = ''
+    
+    ### Krijojm socketin ne protokollin UDP
+    fiekUDP = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
     try:
         ### Tetojme kyqjen ne hostin dhe portin e kerkuar. 
         fiekUDP.connect((host, port))
         print("Socket-i u krijua me sukses ne hostin " + host + " me port " + str(port))
-    ### Kontrolli per gabime  
+        data = ""
+        ### Dergojme kerkesen per kycje ne server
+        fiekUDP.sendall(data.encode() + "\n".encode())
+        ### Presim pergjigje nga serveri
+        received = fiekUDP.recv(1024)
+        ### Printojm pergjigje nga serveri
+        print("Serveri: %s"%received.decode())  
+        ### Presim kerkesen nga tastiera dhe e dergojme
+        data = input("Shkruani emrin e kerkeses: ")
+        fiekUDP.sendall(data.encode())
+        ### Presim pergjigje nga serveri per keresen
+        received = fiekUDP.recv(1024)
+        ### Printojm pergjigje nga serveri
+        print("Serveri: %s"%received.decode())     
+        print("Lidhja me serverin perfundoi")
+    ### Kontrolli per gabime    
+    except KeyboardInterrupt:
+        print("\nScripta u ndal")    
+    except BrokenPipeError:
+            print('\nServeri eshte down')   
     except ConnectionRefusedError:
-        print("Nuk mund te krijohet lidhja me server")
+        print("Nuk mund te krijohet lidhja me serverin")                        
+    finally:
+        fiekUDP.close()
         vazhdo()
-
-    fiekUDP.sendall("Hello".encode())    
-    
-    while MESSAGE != 'exit' and data != 'EXIT':
-        
-        try:
-            ### Presim pergjigje nga serveri
-            data = fiekUDP.recvfrom(BUFFER_SIZE)[0].decode()
-            ### Kontrollojm pergjigjen
-            if data == 'exit':
-                break
-            ### Presim kerkesen nga tastiera    
-            MESSAGE = input("Serveri: " + data + "\nShkruaj kerkesen: ")
-            if not MESSAGE:
-                MESSAGE = 'null'
-            if MESSAGE.upper() == 'EXIT':
-                break     
-            ### Dergojme kerkesen ne server   
-            fiekUDP.sendto(str.encode(MESSAGE), (host, port))
-
-            data = fiekUDP.recvfrom(BUFFER_SIZE)[0].decode()
-            
-            print(data)
-
-            data = fiekUDP.recvfrom(BUFFER_SIZE)[0].decode().upper()
-            
-        ### Kontrolli per gabime  
-        except KeyboardInterrupt:
-            MESSAGE = 'ProcessTerminatedByUser'
-            fiekUDP.send(str.encode(MESSAGE))
-            print('\nJu e mbyllet socketin')
-            break
-        except BrokenPipeError:
-            print('\nServeri eshte down')
-            break    
-        except OSError:  
-            break
-    print('Socketi u mbyll') 
-    ### Mbyllim socketin me serverin
-    fiekUDP.close() 
-    vazhdo()
 
 ### Metode ndihmese per te vazhduar apo jo 
 def vazhdo(): 
@@ -66,16 +53,19 @@ def vazhdo():
             port = porti()    
             connect(host, port)
         else: 
-            print("Scripta u ndal")    
-    ### Kontrolli per gabime          
+            print("Scripta u ndal") 
+    ### Kontrolli per gabime             
     except KeyboardInterrupt:
         print("\nScripta u ndal")
-## Metoda per te zgjedhur hostin              
+    except TypeError:
+        print("\nScripta u ndal")        
+### Metoda per te zgjedhur hostin  
+#           
 def hosti():
     try:
-        input1 = input("Shkruani host-in me te cilin doni te lidheni.(default localhost): ")
+        input1 = input("Shkruani host-in me te cilin doni te lidheni.(default %s): " %defaultHost)
         if not input1:
-            return 'localhost'
+            return defaultHost
         else: 
             isIp = validate_ip(input1)
             if not isIp:
@@ -86,16 +76,17 @@ def hosti():
                     print("Nuk ishte e mundur te gjindet hosti, Provoni serish")
                     hosti()
             else: 
-                return input1    
+                return input1   
     ### Kontrolli per gabime                    
     except KeyboardInterrupt:
         print("\nScripta u ndal")
-### Metoda per te zgjedhur portin   
+
+### Metoda per te zgjedhur portin             
 def porti():
     try:
-        input2 = input("Shkruani portin me te cilin doni te lidheni.(default 8000): ")        
+        input2 = input("Shkruani portin me te cilin doni te lidheni.(default %s): " %defaultPort)        
         if not input2 :
-            return 8000
+            return defaultPort
         else:
             try:
                 val = int(input2)
@@ -103,9 +94,11 @@ def porti():
             except:
                 print("Porti duhet te jete nje numer.") 
                 porti()   
+    ### Kontrolli per gabime              
     except KeyboardInterrupt:
-        print("\nScripta u ndal")    
-### Metoda e cila teston ip se a jan ne formartin IPv4        
+        print("\nScripta u ndal") 
+
+### Metoda e cila teston ip se a jan ne formartin IPv4                     
 def validate_ip(s):
     a = s.split('.')
     if len(a) != 4:
@@ -115,7 +108,8 @@ def validate_ip(s):
             return False
         i = int(x)
         if i < 0 or i > 255:
-            return False        
+            return False
     return True
-
-
+### Metoda qe gjen fjalen ne nje fjali
+def contains_word(s, w):
+    return f' {w} ' in f' {s} '

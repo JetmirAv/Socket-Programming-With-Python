@@ -11,7 +11,7 @@ def clientthread(conn, addr, s):
                
         data = conn.recv(1024).decode() 
         
-        print("Server received data:", data)
+        print("Klienti %s:%s kerkoi: %s" %(addr[0], addr[1], data))
         method = data.upper().strip()
         
         if method == "IPADRESA":

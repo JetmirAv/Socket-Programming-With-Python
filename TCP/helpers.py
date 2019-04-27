@@ -1,6 +1,10 @@
 import socket 
 import sys
 
+
+defaultHost = 'localhsot'
+defaultPort = 12000
+
 ### Metoda me te cilen starton Klienti
 def connect(host, port):
     BUFFER_SIZE = 1024 
@@ -63,9 +67,9 @@ def vazhdo():
 ## Metoda per te zgjedhur hostin              
 def hosti():
     try:
-        input1 = input("Shkruani host-in me te cilin doni te lidheni.(default localhost): ")
+        input1 = input("Shkruani host-in me te cilin doni te lidheni.(default %s): " %defaultHost)
         if not input1:
-            return 'localhost'
+            return defaultHost
         else: 
             isIp = validate_ip(input1)
             if not isIp:
@@ -83,9 +87,9 @@ def hosti():
 ### Metoda per te zgjedhur portin   
 def porti():
     try:
-        input2 = input("Shkruani portin me te cilin doni te lidheni.(default 8000): ")        
+        input2 = input("Shkruani portin me te cilin doni te lidheni.(default %s): " %defaultPort)        
         if not input2 :
-            return 8000
+            return defaultPort
         else:
             try:
                 val = int(input2)

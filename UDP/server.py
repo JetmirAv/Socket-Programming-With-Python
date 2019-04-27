@@ -1,151 +1,171 @@
-import threading
-import socketserver
+import socket 
+import sys 
+from _thread import *
+
+# from clientThread import *
 from metodat import *
 
-# Teksti qe shfaqet ne startim te scriptes
-print("""
-:::::::::::::::::::::::::::::::::::::::'####:'##:'####:'##:::'##::::::::::::::::::::::::::::::::::::::::
-::::::::::::::::::::::::::::::::::::::: ##.....::. ##:: ##.....:: ##::'##:::::::::::::::::::::::::::::::::::::::::
-::::::::::::::::::::::::::::::::::::::: ##:::::::: ##:: ##::::::: ##:'##::::::::::::::::::::::::::::::::::::::::::
-::::::::::::::::::::::::::::::::::::::: ##:::: ##:: ##::: ###:::::::::::::::::::::::::::::::::::::::::::
-::::::::::::::::::::::::::::::::::::::: ##...::::: ##:: ##...:::: ##. ##::::::::::::::::::::::::::::::::::::::::::
-::::::::::::::::::::::::::::::::::::::: ##:::::::: ##:: ##::::::: ##:. ##:::::::::::::::::::::::::::::::::::::::::
-::::::::::::::::::::::::::::::::::::::: ##:::::::'##: ####: ##::. ##::::::::::::::::::::::::::::::::::::::::
-:::::::::::::::::::::::::::::::::::::::..::::::::....::........::..::::..:::::::::::::::::::::::::::::::::::::::::
-:::'##::::'##:'####::'####::::::::::::'##::'####:'####::'##::::'##:'####:'####::'##:
-::: ##:::: ##: ##.... ##: ##.... ##::::::::::'##... ##: ##.....:: ##.... ##: ##:::: ##: ##.....:: ##.... ##:. ##::
-::: ##:::: ##: ##:::: ##: ##:::: ##:::::::::: ##:::..:: ##::::::: ##:::: ##: ##:::: ##: ##::::::: ##:::: ##:: ##::
-::: ##:::: ##: ##:::: ##: ####::'###:. ##:: ##::: ####:: ##:::: ##: ##::: ####::: ##::
-::: ##:::: ##: ##:::: ##: ##.....:::........::..... ##: ##...:::: ##.. ##:::. ##:: ##:: ##...:::: ##.. ##:::: ##::
-::: ##:::: ##: ##:::: ##: ##:::::::::::::::::'##::: ##: ##::::::: ##::. ##:::. ## ##::: ##::::::: ##::. ##::: ##::
-:::. ###:: ####:: ##:::::::::::::::::. ##:: ####: ##:::. ##:::. #:::: ####: ##:::. ##:'##:
-::::.......:::........:::..:::::::::::::::::::......:::........::..:::::..:::::...:::::........::..:::::..::....::
-""")
+host = 'localhost'
+port = 12000
+### Krijojm socketin te protokolit TCP
+fiekUDP = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+try: 
+### Header per scripten fiek tcp-serveri
+    print("""
+:::::::::::::::::::::::::::::::::::::::'########:'####:'########:'##:::'##::::::::::::::::::::::::::::::::::::: 
+::::::::::::::::::::::::::::::::::::::: ##.....::. ##:: ##.....:: ##::'##:::::::::::::::::::::::::::::::::::::: 
+::::::::::::::::::::::::::::::::::::::: ##:::::::: ##:: ##::::::: ##:'##::::::::::::::::::::::::::::::::::::::: 
+::::::::::::::::::::::::::::::::::::::: ######:::: ##:: ######::: #####:::::::::::::::::::::::::::::::::::::::: 
+::::::::::::::::::::::::::::::::::::::: ##...::::: ##:: ##...:::: ##. ##::::::::::::::::::::::::::::::::::::::: 
+::::::::::::::::::::::::::::::::::::::: ##:::::::: ##:: ##::::::: ##:. ##:::::::::::::::::::::::::::::::::::::: 
+::::::::::::::::::::::::::::::::::::::: ##:::::::'####: ########: ##::. ##::::::::::::::::::::::::::::::::::::: 
+:::::::::::::::::::::::::::::::::::::::..::::::::....::........::..::::..:::::::::::::::::::::::::::::::::::::: 
+'########::'######::'########::::::::::::'######::'########:'########::'##::::'##:'########:'########::'####::::
+... ##..::'##... ##: ##.... ##::::::::::'##... ##: ##.....:: ##.... ##: ##:::: ##: ##.....:: ##.... ##:. ##:::::
+::: ##:::: ##:::..:: ##:::: ##:::::::::: ##:::..:: ##::::::: ##:::: ##: ##:::: ##: ##::::::: ##:::: ##:: ##:::::
+::: ##:::: ##::::::: ########::'#######:. ######:: ######::: ########:: ##:::: ##: ######::: ########::: ##:::::
+::: ##:::: ##::::::: ##.....:::........::..... ##: ##...:::: ##.. ##:::. ##:: ##:: ##...:::: ##.. ##:::: ##:::::
+::: ##:::: ##::: ##: ##:::::::::::::::::'##::: ##: ##::::::: ##::. ##:::. ## ##::: ##::::::: ##::. ##::: ##:::::
+::: ##::::. ######:: ##:::::::::::::::::. ######:: ########: ##:::. ##:::. ###:::: ########: ##:::. ##:'####::::
+:::..::::::......:::..:::::::::::::::::::......:::........::..:::::..:::::...:::::........::..:::::..::....:::::
+Startoi serveri ne %s:%s.
+Ne Pritje te kerkesave.   
+    """ %(host, port))
 
 
-class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
+    ### Bashkangjesim hostin dhe portin ne te cilin do te punoj serveri
+    fiekUDP.bind((host, port))
+    
 
-    def handle(self):
-        data = self.request[0].strip().decode().upper()
-        data = data.split(" ",1)
-		# Ruajme portin e klientit ne variablen port
-        port = self.client_address[1]
-		# Ruajme socketin e nevojshem per komunikim ne variablen socket
-        socket = self.request[1]
-		# Ruajme adresen e klientit ne variablen client_address
-        client_address = (self.client_address[0])
-        print("Received call from client address: %s:%s" %(client_address, port))
-        welcome = """Zgjedhni njerin nga Operacionet 
-                (IPADRESA, NUMRIIPORTIT, BASHKETINGELLORE, 
-                PRINTIMI, EMRIIKOMPJUTERIT, KOHA, LOJA,
-                FIBONACCI, KONVERTIMI, KONTROLLOPORTIN, PASSWORDGEN)? """ 
-        socket.sendto(welcome.encode(), self.client_address)
-        # data = self.request[0].strip().decode().upper()
-        data = socket.recvfrom(1024)[0].decode()      
-        data = data.split(" ",1)
-        data[0] = data[0].upper()
-        print(data[0])
-        # Testojme kerkesen
-        if len(data) == 1:
-            print("received data: %s" %(data[0]))
-        else:    
-            print("received data: %s %s" %(data[0], data[1]))
-		
-        if data[0] == "IPADRESA":
-            MESSAGE = IPADRESA(client_address)
-
-        elif data[0] == "NUMRIIPORTIT":
-            MESSAGE =  NUMRIIPORTIT(port)
-
-        elif data[0] == "BASHKETINGELLORE": 
-            if len(data) == 1:
-                MESSAGE = "Ju duhet te shtypni Bashketingellore {hapsire} teskti."
-            else:    
-                MESSAGE = BASHKETINGELLORE(data[1])
-            
-        elif data[0] == "PRINTIMI":
-            if len(data) != 2:
-                MESSAGE = "Ju duhet te shtypni Printimi {hapsire} teskti."
-            else:        
-                MESSAGE = PRINTIMI(data[1])
-
-        elif data[0] == "EMRIIKOMPJUTERIT":
-            MESSAGE =  EMRIKOMPJUTERIT(socket)   
-
-        elif data[0] == "KOHA":
-            MESSAGE = KOHA()  
-
-        elif data[0] == "LOJA":
-            MESSAGE =  LOJA()   
-             
-        elif data[0] == "KONTROLLOPORTIN":
-            host_port = data[1].split(" ",1)
-            if len(host_port) != 2:
-                MESSAGE = "Ju duhet te shtypni kontrollohostin {hapsire} hosti {hapsire} porti."
-            else:        
-                MESSAGE = KONTROLLOPORTIN(host_port[0], host_port[1])
- 
-        elif data[0] == "PASSWORDGEN":
-            MESSAGE = PASSWORDGEN()
-
-        elif data[0] == "FIBONACCI":
-            if len(data) != 2:
-                MESSAGE = "Ju duhet te shtypni Fibonacci {hapsire} numer."
-            else:        
-                if not data[1].isdigit():   
-                    MESSAGE = "Ju duhet te shtypni Fibonacci {hapsire} numer."
-                else:
-                    MESSAGE = str(Fibonacci(int(data[1]))) 
-            
-        elif data[0] == "KONVERTIMI":
-            if len(data) != 2:
-                MESSAGE = "Ju duhet te shtypni Konvertimi {hapsire} opcioni {hapsire} sasia."                
-            else:    
-                opcioni = data[1].split(" ",1)
-                if len(opcioni) != 2:
-                    MESSAGE = "Ju duhet te shtypni Konvertimi {hapsire} opcioni {hapsire} sasia."
-                else:
-                    if not opcioni[1].isdigit():
-                        MESSAGE = "Ju duhet te shtypni Konvertimi {hapsire} opcioni {hapsire} sasia."                
-                    else: 
-                        MESSAGE = KONVERTIMI(opcioni[0].upper(), float(opcioni[1]))
-        elif data[0] == 'EXIT' or  data[0] == 'ProcessTerminatedByUser'.upper():
-            MESSAGE = 'Klienti nderpreu lidhjen\n'
-               
-        else: 
-            try:
-                MESSAGE = "Ju nuk keni zgjedhur asnje nga opcionet e mesiperme."
-            # Kontrolli per gabime               
-            except socket.error:
-                print("Lidhja u ndepre")
-                
+    while True:
+        count = 1
+        ### Presim per lidhje te ndonje serveri
+        conn, addr = fiekUDP.recvfrom(1024)      
+        print("Eshte kyqur klienti: " + str(addr[0]) + ":" + str(addr[1]))
+        ### Krijimi i nje threadi te veqant per klientin e lidhur
+        # start_new_thread(clientthread, (conn, addr, fiekUDP))   
+        while count != 2:
+            welcome = """Zgjedhni njerin nga Operacionet 
+                    (IPADRESA, NUMRIIPORTIT, BASHKETINGELLORE, 
+                    PRINTIMI, EMRIIKOMPJUTERIT, KOHA, LOJA,
+                    FIBONACCI, KONVERTIMI, KONTROLLOPORTIN, PASSWORDGEN)? """ 
         
-       
-        socket.sendto(MESSAGE.encode(), self.client_address)       
-class ThreadedUDPServer(socketserver.ThreadingMixIn, socketserver.UDPServer):
-    pass
+        
+            fiekUDP.sendto(welcome.encode(), addr)
+            
 
-# Fillimi i scriptes
-if __name__ == "__main__":
-    host, port = "localhost", 12000
-    try:
-        # Krijojm serverin me ane te Klases ThreadUDPServer ne portin 12000 
-        server = ThreadedUDPServer((host, port), ThreadedUDPRequestHandler)    
-        ip, port = server.server_address
-        print("Startoi serveri ne %s:%s."  %(ip, port))
-        print("Ne pritje te kerkesave.")
-        # Presim klientet
-        server.serve_forever()
-        # Krijojme nje thread per cdo klient qe lidhet me serverin.
-        # Me pas ai thread krijon nga nje thread per cdo kerkese qe behet
-        server_thread = threading.Thread(target=server.serve_forever)
-        # Fillon threadin
-        server_thread.daemon = True
-        server_thread.start()
-        # Mbyll te gjite thread-at ne lidhje me klientin ne momentin qe klienti shkeputet
-        server.shutdown()
-    # Kontrolli per gabime
-    except KeyboardInterrupt:
-        print("\nJu e ndalet serverin")    
-    except OSError:
-        print("Porti eshte i nxene")        
+            data, addr = fiekUDP.recvfrom(1024)
+            data = data.decode() 
+            print("Klienti %s:%s kerkoi: %s" %(addr[0], addr[1], data))
+
+            data = data.split(" ", 1)
+            
+            method = data[0].upper().strip()
+            
+            if method == "IPADRESA":
+                MESSAGE = IPADRESA(addr[0])
+
+            elif method == "NUMRIIPORTIT":
+                MESSAGE =  NUMRIIPORTIT(addr[1])
+
+            elif method == "BASHKETINGELLORE":
+                if len(data) == 1:
+                    MESSAGE = "Ju duhet te shtypni Bashketingellore {hapsire} teskti."
+                else:    
+                    MESSAGE = BASHKETINGELLORE(data[1])
+            elif method == "PRINTIMI":
+                if len(data) != 2:
+                    MESSAGE = "Ju duhet te shtypni Printimi {hapsire} teskti."
+                else:        
+                    MESSAGE = PRINTIMI(data[1])
+
+            elif method == "EMRIIKOMPJUTERIT":
+                MESSAGE =  EMRIKOMPJUTERIT(fiekUDP)   
+
+            elif method == "KOHA":
+                MESSAGE = KOHA()  
+
+            elif method == "LOJA":
+                MESSAGE =  LOJA()   
+                    
+            elif method == "KONTROLLOPORTIN":
+
+                if len(data) != 2:
+                    MESSAGE = "Ju duhet te shtypni kontrollohostin {hapsire} hosti {hapsire} porti."
+                else:        
+                    host_port = data[1].split(" ",1)
+                    if len(host_port) != 2:
+                        MESSAGE = "Ju duhet te shtypni kontrollohostin {hapsire} hosti {hapsire} porti."
+                    else:        
+                        MESSAGE = KONTROLLOPORTIN(host_port[0], host_port[1])
+  
+            elif method == "PASSWORDGEN":
+                MESSAGE = PASSWORDGEN()
+
+            elif method == "FIBONACCI":
+                if len(data) != 2:
+                    MESSAGE = "Ju duhet te shtypni Fibonacci {hapsire} numer."
+                else:        
+                    if not data[1].isdigit():   
+                        MESSAGE = "Ju duhet te shtypni Fibonacci {hapsire} numer."
+                    else:
+                        MESSAGE = str(Fibonacci(int(data[1])))
+            elif method == "KONTROLLOPORTIN":
+                host_port = data[1].split(" ",1)
+                if len(host_port) != 2:
+                    MESSAGE = "Ju duhet te shtypni kontrollohostin {hapsire} hosti {hapsire} porti."
+                else:        
+                    MESSAGE = KONTROLLOPORTIN(host_port[0], host_port[1])
+    
+            elif method == "PASSWORDGEN":
+                MESSAGE = PASSWORDGEN()
+
+                
+            elif method == "KONVERTIMI":
+                if len(data) != 2:
+                    MESSAGE = "Ju duhet te shtypni Konvertimi {hapsire} opcioni {hapsire} sasia."                
+                else:    
+                    opcioni = data[1].split(" ",1)
+                    if len(opcioni) != 2:
+                        MESSAGE = "Ju duhet te shtypni Konvertimi {hapsire} opcioni {hapsire} sasia."
+                    else:
+                        if not opcioni[1].isdigit():
+                            MESSAGE = "Ju duhet te shtypni Konvertimi {hapsire} opcioni {hapsire} sasia."                
+                        else: 
+                            MESSAGE = KONVERTIMI(opcioni[0].upper(), float(opcioni[1]))
+             
+            elif method == 'EXIT' or  method == 'ProcessTerminatedByUser'.upper():
+                MESSAGE = 'Klienti nderpreu lidhjen\n'  
+            else: 
+                try:
+                    MESSAGE = "Ju nuk keni zgjedhur asnje nga opcionet e mesiperme."
+                # Kontrolli per gabime               
+                except socket.error:
+                    print("Lidhja u ndepre")
+            try:
+                fiekUDP.sendto(str.encode(MESSAGE) + ("\n").encode(), addr)
+                count += 1      
+            except socket.error:
+                print("Nuk eshte e mundur ti dergohet nje pergjigje klientit")  
+                        
+        MESSAGE += "\nLidhja me " + str(addr[0]) + ":" + str(addr[1]) + " u nderpre"
+        print(MESSAGE) 
+        
+        fiekUDP.sendto(str.encode("exit"), addr)
+    
+### Kontrolli per gabime      
+except KeyboardInterrupt:
+    MESSAGE = 'exit'
+    fiekUDP.sendto(str.encode(MESSAGE), addr)
+    print("\nJu e ndalet serverin")
+except ConnectionAbortedError: 
+    print("Klienti nderpreu lidhjen me server")       
+# except socket.error:
+#      print("Porti eshte duke u perdorur")
+ 
+ 
+
+
+
+

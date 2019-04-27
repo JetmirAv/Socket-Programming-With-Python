@@ -5,7 +5,7 @@ from _thread import *
 from clientThread import * 
 
 host = 'localhost'
-port = 8000
+port = 12000
 ### Krijojm socketin te protokolit TCP
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -44,7 +44,7 @@ Ne Pritje te kerkesave.
         except KeyboardInterrupt:
             print('\nJu e ndalet serverin') 
             break       
-        print("Connected with " + str(addr[0]) + ":" + str(addr[1]))
+        print("Eshte kyqur klienti: " + str(addr[0]) + ":" + str(addr[1]))
         ### Krijimi i nje threadi te veqant per klientin e lidhur
         start_new_thread(clientthread, (conn, addr, s))   
     s.close()
