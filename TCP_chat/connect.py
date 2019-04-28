@@ -7,7 +7,7 @@ def hosti():
     try:
         input1 = input("Shkruani host-in me te cilin doni te lidheni.(default %s): " %defaultHost)
         if not input1:
-            return ''
+            return defaultHost
         else: 
             isIp = validate_ip(input1)
             if not isIp:

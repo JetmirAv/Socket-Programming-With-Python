@@ -1,4 +1,4 @@
-from socket import AF_INET, socket, SOCK_STREAM
+import socket
 from threading import Thread
 import tkinter
 from textwrap import wrap
@@ -48,7 +48,7 @@ PORT = porti()
 BUFSIZ = 1024
 ADDR = (HOST, PORT)
 #Krijojme socketin
-client_socket = socket(AF_INET, SOCK_STREAM)
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect(ADDR)
 
 

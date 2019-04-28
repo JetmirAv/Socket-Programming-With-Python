@@ -7,7 +7,7 @@ klientet = {}
 adresat = {}
 
 #Vendosim hostin dhe portin ku do te punojne 
-HOST = 'localhost'
+HOST = "localhost"
 PORT = 12000
 BUFSIZ = 1024
 ADDR = (HOST, PORT)
@@ -53,7 +53,6 @@ def menaxhoKlientin(client):
             # se cka permban dhe varesisht se a ka ndonje pergjigje serveri e kthen ate
             msg = handler(msg, adresat[client]).encode()    
             if msg != "null".encode():
-                print(msg)
                 transmeto(msg, "Serveri: ")
         #Ne te kundert dergon te klienti po te njejtin mesazh 
         # dhe transmeton te klientet e tjere mesazhin me emrin + eshte skycur      
@@ -73,6 +72,7 @@ def transmeto(msg, prefix=""):
 #Metoda main
 if __name__ == "__main__":
     FIEKChat.listen(5)  
+    print("Serveri startoi ne %s:%s" %(HOST, PORT))
     print("Ne pritje te klienteve...")
 
     ACCEPT_THREAD = Thread(target=pranoKlientet)

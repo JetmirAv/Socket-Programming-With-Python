@@ -110,6 +110,3 @@ def validate_ip(s):
         if i < 0 or i > 255:
             return False
     return True
-### Metoda qe gjen fjalen ne nje fjali
-def contains_word(s, w):
-    return f' {w} ' in f' {s} '
